@@ -50,21 +50,64 @@ class _HomeState extends State<Home> {
   final euroController = TextEditingController();
   final bitcoinController = TextEditingController();
 
-  double dolar = 0.0, euro = 0.0;
+  double dolar = 0.0, euro = 0.0, bitcoin = 0.0;
+
+  void _clearAll() {
+    realController.text = "";
+    dolarController.text = "";
+    euroController.text = "";
+    bitcoinController.text = "";
+  }
 
   void _realChanged(String text) {
-    print(text);
+    if (text.isEmpty) {
+      _clearAll();
+      return;
+    }
+    double real = double.parse(text);
+
+    dolarController.text = (real / dolar).toStringAsFixed(2);
+    euroController.text = (real / euro).toStringAsFixed(2);
+    bitcoinController.text = (real / bitcoin).toStringAsFixed(2);
   }
 
   void _dolarChanged(String text) {
+    if (text.isEmpty) {
+      _clearAll();
+      return;
+    }
+    double dolar = double.parse(text);
+
+    realController.text = (dolar * this.dolar).toStringAsFixed(2);
+    euroController.text = (dolar * this.dolar / euro).toStringAsFixed(2);
+    bitcoinController.text = (dolar * this.dolar / bitcoin).toStringAsFixed(2);
+
     print(text);
   }
 
   void _euroChanged(String text) {
-    print(text);
+    if (text.isEmpty) {
+      _clearAll();
+      return;
+    }
+    double euro = double.parse(text);
+
+    realController.text = (euro * this.euro).toStringAsFixed(2);
+    dolarController.text = (euro * this.euro / dolar).toStringAsFixed(2);
+    bitcoinController.text = (euro * this.euro / bitcoin).toStringAsFixed(2);
   }
 
   void _bitcoinChanged(String text) {
+    if (text.isEmpty) {
+      _clearAll();
+      return;
+    }
+    double bitcoin = double.parse(text);
+
+    realController.text = (bitcoin * this.bitcoin).toStringAsFixed(2);
+    dolarController.text = (bitcoin * this.bitcoin / dolar).toStringAsFixed(2);
+    euroController.text = (bitcoin * this.bitcoin / euro).toStringAsFixed(2);
+
     print(text);
   }
 
@@ -104,6 +147,7 @@ class _HomeState extends State<Home> {
               } else {
                 dolar = double.parse(snapshot.data?["USDBRL"]['bid']);
                 euro = double.parse(snapshot.data?["EURBRL"]['bid']);
+                bitcoin = double.parse(snapshot.data?["BTCBRL"]['bid']);
                 return SingleChildScrollView(
                   padding: EdgeInsets.all(10),
                   child: Column(
@@ -149,6 +193,6 @@ buildTextField(labelText, prefixText, TextEditingController controller,
         ),
         prefixText: "$prefixText "),
     onChanged: func,
-    keyboardType: TextInputType.number,
+    keyboardType: TextInputType.numberWithOptions(decimal: true),
   );
 }
